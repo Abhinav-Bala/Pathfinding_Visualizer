@@ -61,7 +61,7 @@ def aStarBackTrack(current):
     while temp_node.previous_node:
         path.append(temp_node.previous_node)
         temp_node = temp_node.previous_node
-    print("Done finding path")
+
 
 def aStarSearch():
 
@@ -78,7 +78,7 @@ def aStarSearch():
         
         if current_node == end:
             aStarBackTrack(current_node)
-            popUpDialog("Solution found.", "Success Message")
+            print("Solution found.")
             return 
 
         open_set.remove(current_node)
@@ -108,19 +108,8 @@ def aStarSearch():
                 neighbor.previous_node = current_node
         
         drawGrid()
-    popUpDialog("No solution", "Error Message")
-
-def popUpDialog(text, title):
-    layout = [  [gui.Text(text)], [gui.Button('Ok')] ] 
-    popUpWindow = gui.Window(title, layout)  
-    while True:
-        event, values = popUpWindow.read()
-        if event == gui.WINDOW_CLOSED or event == 'Quit':
-            break
-    popUpWindow.close() 
+    print("No sol.")
     
-    
-
 def displayImage(image):    
     window.blit(image, (0,0))
     pygame.display.flip()
@@ -203,7 +192,6 @@ while True:
                     if event.key == pygame.K_RETURN:
                         is_selecting_start = False
                         is_selecting_end = True
-                        print(str(start.x_pos) + " " + str(start.y_pos))
                     if event.key == pygame.K_c:
                         reset_game = True
         
@@ -218,7 +206,6 @@ while True:
                     if event.key == pygame.K_RETURN:
                         is_selecting_end = False
                         is_selecting_walls = True
-                        print(end)
                     if event.key == pygame.K_c:
                         reset_game = True
 
@@ -244,7 +231,8 @@ while True:
 
         if start_search == True:
             aStarSearch()
-
+            start_search = False
+        
         drawGrid()
         pygame.display.flip()
             
