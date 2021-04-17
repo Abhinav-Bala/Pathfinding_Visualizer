@@ -2,9 +2,7 @@ import pygame
 import math
 import sys
 from cell import Cell
-from PyZenity import *
-
-
+import PySimpleGUI as gui
 
 # this function exits the pygame window and ends the program
 def exitProgram():
@@ -66,8 +64,8 @@ def aStarBackTrack(current):
     print("Done finding path")
 
 def aStarSearch():
-    start.h_score = heuristic(start, end)
 
+    start.h_score = heuristic(start, end)
     open_set.append(start)    
     while len(open_set) > 0:
         lowest_f_score_index = 0
@@ -80,21 +78,25 @@ def aStarSearch():
         
         if current_node == end:
             aStarBackTrack(current_node)
+            popUpDialog("Solution found.", "Success Message")
             return 
 
         open_set.remove(current_node)
         closed_set.append(current_node)
 
         for neighbor in current_node.neighbors:
+            
             if neighbor in closed_set or neighbor.wall:
                 continue
+            
             new_g_score = current_node.g_score + 1
-
             use_new_path = False
+            
             if neighbor in open_set:
                 if new_g_score < neighbor.g_score:
                     neighbor.g_score = new_g_score
                     use_new_path = True
+            
             else:
                 neighbor.g_score = new_g_score
                 use_new_path = True
@@ -104,9 +106,18 @@ def aStarSearch():
                 neighbor.h_score = heuristic(neighbor, end)
                 neighbor.f_score = neighbor.g_score + neighbor.h_score
                 neighbor.previous_node = current_node
+        
         drawGrid()
+    popUpDialog("No solution", "Error Message")
 
-    cancel = Question('Continue game?')
+def popUpDialog(text, title):
+    layout = [  [gui.Text(text)], [gui.Button('Ok')] ] 
+    popUpWindow = gui.Window(title, layout)  
+    while True:
+        event, values = popUpWindow.read()
+        if event == gui.WINDOW_CLOSED or event == 'Quit':
+            break
+    popUpWindow.close() 
     
     
 
