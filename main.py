@@ -2,10 +2,22 @@ import pygame
 import math
 import sys
 from cell import Cell
-import PySimpleGUI as gui
 
+
+def displayResultScreen():
+    displayImage(pygame.image.load('images/no_solution.png'))
+    pygame.display.flip()
+    pygame.time.wait(3000)
+
+def checkForExit():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exitProgram()
 # this function exits the pygame window and ends the program
 def exitProgram():
+    displayImage(pygame.image.load('images/exit_screen.jpg'))
+    pygame.display.flip()
+    pygame.time.wait(2000)
     pygame.quit()
     sys.exit()
 
@@ -58,16 +70,20 @@ def drawGrid():
 
 def aStarBackTrack(current):
     temp_node = current
-    while temp_node.previous_node:
+    while temp_node.previous_node != None:  
+        checkForExit() 
         path.append(temp_node.previous_node)
+        print(temp_node.previous_node)
         temp_node = temp_node.previous_node
-
+    print("Done Backtracking")
 
 def aStarSearch():
 
     start.h_score = heuristic(start, end)
     open_set.append(start)    
     while len(open_set) > 0:
+        
+        
         lowest_f_score_index = 0
         for index in range(len(open_set)):
             if open_set[index].f_score < open_set[lowest_f_score_index].f_score:
@@ -78,7 +94,6 @@ def aStarSearch():
         
         if current_node == end:
             aStarBackTrack(current_node)
-            print("Solution found.")
             return 
 
         open_set.remove(current_node)
@@ -108,7 +123,7 @@ def aStarSearch():
                 neighbor.previous_node = current_node
         
         drawGrid()
-    print("No sol.")
+    displayResultScreen()
     
 def displayImage(image):    
     window.blit(image, (0,0))

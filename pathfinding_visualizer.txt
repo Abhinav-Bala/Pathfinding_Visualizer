@@ -1,0 +1,31 @@
+Author: Abhinav Balsburamanian 
+Class: ICS3U0 - C
+Date: April 18, 2021
+Version: 1.35
+Unit: 6
+Question: 1
+Programming Language: Python 3.9.1
+
+Programming Description: This program will start by displaying the title screen and 
+instructions on how to use the program. A general description of the pathfinding algorithm will
+also be given with an option to learn more by reading another article. Then, the user will be
+presented with a 40x60 grid where they can first change the position of the starting node. Then,
+the user will be able to customize the ending node and then finally place walls along the grid 
+area. A wall is a node that the alogrithm can not consider when determining the shortest path.
+Finally, the user will confirm their selection and then watch the program try to find the shortest
+path. If there is a valid solution, the program will display the path by highlighting it in a 
+different color. If no valid path is found, the program will stop and wait for the user to reset
+the grid or exit the program. 
+
+Program Assumptions: This program assumes that the user has already installed the latest version of
+python and pygame. In order to have the best visualization, the user is reccomended to add walls
+to force the program to take obscure routes. Additionally, the program assumes the user understands
+how the A* Pathfinding algorithm works.Lastly, fluency of English is another assumption because all 
+the instructions are given in English.
+
+Features of the Program: In order to provide an appealing
+
+Restrictions: Once a game mode has been selected, the player must play the game until
+they run out of lives before being prompted to switch to a different mode.
+
+Known Errors: N/A
