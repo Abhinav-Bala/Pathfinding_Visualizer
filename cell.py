@@ -39,10 +39,10 @@ class Cell:
      # this function will set the color of the cell
     def colorCell(self, win, color, shape):
         side = 20
-        if shape == "reg square":
-            pygame.draw.rect(win, color, (self.x_pos * side, self.y_pos * side, side, side))
+        if shape == "node":
+            pygame.draw.circle(win, color, (self.x_pos*side+9, self.y_pos*side+9), side//3)
         elif shape == "small square":
             pygame.draw.rect(win, color, (self.x_pos * side, self.y_pos * side, side - 2, side - 2))
         elif shape == "circle":
-            pygame.draw.circle(win, color, (self.x_pos*side+9, self.y_pos*side+9), side//3)
+            pygame.draw.circle(win, color, (self.x_pos*side+9, self.y_pos*side+9), side//5)
 

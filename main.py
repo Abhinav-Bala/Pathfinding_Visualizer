@@ -2,6 +2,7 @@ import pygame
 import math
 import sys
 from cell import Cell
+import random
 
 
 def displayResultScreen():
@@ -17,7 +18,7 @@ def checkForExit():
 def exitProgram():
     displayImage(pygame.image.load('images/exit_screen.jpg'))
     pygame.display.flip()
-    pygame.time.wait(2000)
+    pygame.time.wait(1500)
     pygame.quit()
     sys.exit()
 
@@ -31,6 +32,7 @@ def selectWall(mouse_pos, new_state, end_node, start_node):
 def selectStart(mouse_pos, start_node, end_node):
     x = mouse_pos[0] // 20
     y = mouse_pos[1] // 20
+    #print(str(x) + " " + str(y))
     if grid[x][y] != end_node:
         return grid[x][y]
     else:
@@ -54,15 +56,15 @@ def drawGrid():
             cell = grid[x][y]
             cell.colorCell(window, (244,250,250), "small square")
             if cell == start:
-                cell.colorCell(window, (0, 153, 0), "circle")
+                cell.colorCell(window, (0, 153, 0), "node")
             elif cell in path:
-                cell.colorCell(window, (24, 110, 110), "small square")
+                cell.colorCell(window, (24, 90, 90), "small square")
             elif cell in closed_set:
                 cell.colorCell(window, (255, 153, 51), "small square")
             elif cell in open_set:
                 cell.colorCell(window, (255, 153, 51), "circle")
             elif cell == end:
-                cell.colorCell(window, (204, 0, 0), "circle")
+                cell.colorCell(window, (204, 0, 0), "node")
             elif cell.wall:
                 cell.colorCell(window, (2, 28, 48), "small square")
                 
@@ -73,7 +75,6 @@ def aStarBackTrack(current):
     while temp_node.previous_node != None:  
         checkForExit() 
         path.append(temp_node.previous_node)
-        print(temp_node.previous_node)
         temp_node = temp_node.previous_node
     print("Done Backtracking")
 
@@ -83,6 +84,7 @@ def aStarSearch():
     open_set.append(start)    
     while len(open_set) > 0:
         
+        checkForExit()
         
         lowest_f_score_index = 0
         for index in range(len(open_set)):
@@ -93,8 +95,8 @@ def aStarSearch():
         
         
         if current_node == end:
-            aStarBackTrack(current_node)
-            return 
+            open_set.remove(current_node)
+            return current_node
 
         open_set.remove(current_node)
         closed_set.append(current_node)
@@ -145,14 +147,39 @@ def displayPages():
                 if event.key == pygame.K_LEFT:
                     if tutorial_index != 0:
                         tutorial_index-= 1
-        
-# initializes variables; most of these are temporary until the gui is added
+
+def clearWall():
+    for x in range(grid_col):
+        for y in range(grid_rows):
+            grid[x][y].wall = False
+
+def generateRandomWalls():
+
+    clearWall()
+
+    for x in range(grid_col):
+        for y in range(grid_rows):
+            if grid[x][y] == start or grid[x][y] == end:
+                continue
+            else:
+                if random.randint(1, 1000) < 224:
+                    grid[x][y].wall = True
+                    
+                else:
+                    continue
+
+        drawGrid()
+
+
+
+
+
+# initializes variables
 grid = []
 side_length = 20
-white = (0, 60, 60)
 grid_rows = 40
 grid_col = 60
-is_diagonal = True
+use_diagonal = True
 screen_length = grid_col * side_length
 screen_width = grid_rows * side_length
 screen_size = (screen_length, screen_width)
@@ -161,7 +188,6 @@ screen_size = (screen_length, screen_width)
 pygame.init() 
 window = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Pathfinding Visualizer")
-clock = pygame.time.Clock()
 
 displayPages()
 
@@ -169,15 +195,15 @@ while True:
 
     # adds all the cells to the grid
     for x in range(grid_col):
-        lis = []
+        row_list = []
         for y in range(grid_rows):
-            lis.append(Cell(x, y))
-        grid.append(lis)
+            row_list.append(Cell(x, y))
+        grid.append(row_list)
 
     # adds the neighbors of all the cells in the grid
     for x in range(grid_col):
         for y in range(grid_rows):
-            grid[x][y].addNeighbors(grid, grid_col, grid_rows, is_diagonal)
+            grid[x][y].addNeighbors(grid, grid_col, grid_rows, use_diagonal)
             grid[x][y].wall = False
 
     start = grid[5][18]
@@ -237,17 +263,29 @@ while True:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         start_search = True
-                        is_selecting_wall = False
+                        is_selecting_walls = False
                     if event.key == pygame.K_c:
                         reset_game = True
+                    if event.key == pygame.K_m:
+                        generateRandomWalls()
 
+        
+
+        if start_search == True:
+            last_node = aStarSearch()
+            aStarBackTrack(last_node)
+            start_search = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exitProgram()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_c:
+                    reset_game = True
+        
         if reset_game == True:
             break
 
-        if start_search == True:
-            aStarSearch()
-            start_search = False
-        
         drawGrid()
         pygame.display.flip()
             
