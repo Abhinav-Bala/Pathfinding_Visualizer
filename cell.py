@@ -44,5 +44,5 @@ class Cell:
         elif shape == "small square":
             pygame.draw.rect(win, color, (self.x_pos * side, self.y_pos * side, side - 2, side - 2))
         elif shape == "circle":
-            pygame.draw.circle(win, color, (self.x_pos*side+9, self.y_pos*side+9), side//5)
+            pygame.draw.circle(win, color, (self.x_pos*side+9, self.y_pos*side+9), side//6)
 

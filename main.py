@@ -66,7 +66,7 @@ def drawGrid():
             elif cell == end:
                 cell.colorCell(window, (204, 0, 0), "node")
             elif cell.wall:
-                cell.colorCell(window, (2, 28, 48), "small square")
+                cell.colorCell(window, (2, 18, 30), "small square")
                 
     pygame.display.update()
 
@@ -133,7 +133,7 @@ def displayImage(image):
 
 def displayPages():
     tutorial_images = [pygame.image.load('images/screen_1.jpg'), pygame.image.load('images/screen_2.jpg'), pygame.image.load('images/screen_3.png'), pygame.image.load('images/screen_4.jpg'), 
-    pygame.image.load('images/screen_5.jpg'), pygame.image.load('images/screen_6.jpg'), pygame.image.load('images/screen_7.jpg')]
+    pygame.image.load('images/screen_5.jpg'), pygame.image.load('images/screen_6.jpg'), pygame.image.load('images/screen_7.png')]
     tutorial_index = 0
 
     while tutorial_index < len(tutorial_images):
@@ -157,8 +157,8 @@ def generateRandomWalls():
 
     clearWall()
 
-    for x in range(grid_col):
-        for y in range(grid_rows):
+    for x in range(grid_col-1):
+        for y in range(grid_rows-1):
             if grid[x][y] == start or grid[x][y] == end:
                 continue
             else:
@@ -266,7 +266,7 @@ while True:
                         is_selecting_walls = False
                     if event.key == pygame.K_c:
                         reset_game = True
-                    if event.key == pygame.K_m:
+                    if event.key == pygame.K_w:
                         generateRandomWalls()
 
         
