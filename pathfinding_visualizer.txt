@@ -20,7 +20,7 @@ the grid or exit the program.
 Program Assumptions: This program assumes that the user has already installed the latest version of
 python and pygame. In order to have the best visualization, the user is reccomended to add walls
 to force the program to take obscure routes. Additionally, the program assumes the user understands
-how the A* Pathfinding algorithm works.Lastly, fluency of English is another assumption because all 
+how the A* Pathfinding algorithm works. Lastly, fluency of English is another assumption because all 
 the instructions are given in English.
 
 Features of the Program: In order to provide an appealing
