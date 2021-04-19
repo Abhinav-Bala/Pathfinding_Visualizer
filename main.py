@@ -223,7 +223,6 @@ displayPages()
 while True:
 
     initGrid()
-    
 
     start = grid[5][18]
     end = grid[54][18]
@@ -292,6 +291,8 @@ while True:
                         reset_game = True
                     if event.key == pygame.K_w:
                         generateRandomWalls()
+                    if event.key == pygame.K_BACKSPACE:
+                        clearWall()
 
         if start_search == True:
             last_node = aStarSearch()
