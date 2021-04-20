@@ -1,5 +1,10 @@
-import pygame
+# Abhinav Balasubramanian
+# April 20, 2021
+# ICS3UO-C
+# This file has the cell class which will be called in the main program
+# It also contains a function which will draw the cell on the pygame screen
 
+import pygame
 
 # this class will allow each cell to have its own properties that can be modified
 class Cell:

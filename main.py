@@ -1,3 +1,9 @@
+# Abhinav Balasubramanian
+# April 20, 2021
+# ICS3UO-C
+# This file will intitialize the pygame application, take user inputs, and perform the main logic of the pathfinding algorithm.
+# It also will update the pygame screen to show the visualization.
+
 import pygame # imports the pygame library
 import math # imports the math library
 import random # imports the random library
@@ -6,10 +12,10 @@ from cell import Cell # imports the Cell class from cell.py
 
 # this function displays the screen when there is no solution
 def displayResultScreen():
-    try: # this is to handle an exception caused by retreiving the image
+    try: # this is to handle an exception caused by retrieving the image
         displayImage(pygame.image.load('./images/no_solution.png')) # passes the image to displayImage function
     except Exception:  # catches any error
-        print("ERROR RETREIVING IMAGES. Make sure you are in the root directory (/pathfinding_visualizer) and all images are in the images folder") # prints error statement
+        print("ERROR RETREIVING IMAGES. Make sure you are in the program's root directory (/pathfinding_visualizer) and all images are in the images folder") # prints error statement
         exitProgram()
     pygame.display.flip() # updates the pygame application
     pygame.time.wait(3000) # waits for 3 seconds before continuing the program
@@ -22,12 +28,12 @@ def checkForExit():
 
 # this function exits the program
 def exitProgram():
-    try: # this is to handle an exception caused by retreiving the image
+    try: # this is to handle an exception caused by retrieving the image
         displayImage(pygame.image.load('./images/exit_screen.jpg')) # displays the goodbye screen
         pygame.display.flip() # updates the pygame display
         pygame.time.wait(1500) # shows the screen for 1.5 seconds
     except Exception: # catches any error
-        print("ERROR RETREIVING IMAGES. Make sure you are in the root directory (/pathfinding_visualizer) and all images are in the images folder") # prints error statement
+        print("ERROR RETREIVING IMAGES. Make sure you are in the program's root directory (/pathfinding_visualizer) and all images are in the images folder") # prints error statement
     pygame.quit() # quits the application
     sys.exit() # exits the program
 
@@ -131,8 +137,8 @@ def aStarSearch():
 
             for cells in current_node.neighbors: # loops through all the neighbors of a cell
                 
-                if cells in closed_list or cells.wall == True:
-                    continue
+                if cells in closed_list or cells.wall == True: # checks if the cell has already been looked at or is a wall
+                    continue # goes back to the top of the loop
                 
                 else:
 
@@ -165,12 +171,12 @@ def displayImage(image): # takes an image as the parameter
 
 # this function will display the correct tutorial page
 def displayPages():
-    try:
+    try: 
         # this is a list of all the images in the order they are supposed to be shown
         tutorial_images = [pygame.image.load('./images/screen_1.jpg'), pygame.image.load('./images/screen_2.jpg'), pygame.image.load('./images/screen_3.png'), pygame.image.load('./images/screen_4.jpg'), 
         pygame.image.load('./images/screen_5.jpg'), pygame.image.load('./images/screen_6.jpg'), pygame.image.load('./images/screen_7.png')]
     except Exception:
-        print("ERROR RETREIVING IMAGES. Make sure you are in the root directory (/pathfinding_visualizer) and all images are in the images folder")
+        print("ERROR RETREIVING IMAGES. Make sure you are in the program's root directory (/pathfinding_visualizer) and all images are in the images folder")
         exitProgram()
 
     tutorial_index = 0 # initializes tutorial_index
@@ -342,7 +348,3 @@ while True: # this loop will run until the user wishes to quit the program
 
         drawGrid() # draws the current grid
         pygame.display.flip() # updates the screen
-            
-
-            
-    
