@@ -1,12 +1,8 @@
-try:
-    import pygame # imports the pygame library
-    import math # imports the math library
-    import random # imports the random library
-    import sys # imports sys
-    from cell import Cell # imports the Cell class from cell.py
-except ImportError:
-    print("Error importing required modules. Make sure to have the latest version of pygame installed.")
-    exit()
+import pygame # imports the pygame library
+import math # imports the math library
+import random # imports the random library
+import sys # imports sys
+from cell import Cell # imports the Cell class from cell.py
 
 # this function displays the screen when there is no solution
 def displayResultScreen():
@@ -103,8 +99,8 @@ def aStarBackTrack(current): # takes the current node as the only parameter
     in_path = current # assigns the current to the path_node
     while True: # runs the loop until it reaches the start node
         checkForExit()
-        if in_path.previous_node == None or in_path.previous_node == start:
-            break
+        if in_path.previous_node == None or in_path.previous_node == start: # checks whether there is no previous node or the current node is the start node
+            break # exits the loop
         else:
             path.append(in_path.previous_node) # adds the previous node to the path list
             in_path = in_path.previous_node # assigns the previouse node to the in_path variable

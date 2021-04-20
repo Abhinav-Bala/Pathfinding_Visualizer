@@ -1,8 +1,4 @@
-try:
-    import pygame
-except ImportError:
-    print("Error importing required modules. Make sure to have the latest version of pygame installed.")
-    exit()
+import pygame
 
 
 # this class will allow each cell to have its own properties that can be modified
