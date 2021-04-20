@@ -8,6 +8,8 @@ Unit: 6 - Culminating
 
 Programming Language: Python 3.9.1 64-bit
 
+[This video will walkthrough the program and highlight all of its features](https://www.youtube.com/watch?v=wxNOco10RBg)
+
 ## Programming Description: 
 This purpose of this program is visualize the process that the A* Pathfinding algorithm uses to determine the shortest path between two nodes. It will start by displaying the title screen and 
 instructions on how to use the program. A general description of the pathfinding algorithm will
