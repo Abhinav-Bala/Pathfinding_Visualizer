@@ -99,14 +99,17 @@ def drawGrid():
 
 # this function will backtrack to determine all the cells that are in the shortest path
 def aStarBackTrack(current): # takes the current node as the only parameter
-    # print("Backtracking called.") # this print statement is used for debugging
+    print("Backtracking called.") # this print statement is used for debugging
     in_path = current # assigns the current to the path_node
-    while in_path.previous_node != None: # runs the loop until it reaches the start node
-        checkForExit() 
-        path.append(in_path.previous_node) # adds the previous node to the path list
-        in_path = in_path.previous_node # assigns the previouse node to the in_path variable
-        drawGrid()
-    # print("Done Backtracking") # this print statement should be uncommented when debugging the program
+    while True: # runs the loop until it reaches the start node
+        checkForExit()
+        if in_path.previous_node == None or in_path.previous_node == start:
+            break
+        else:
+            path.append(in_path.previous_node) # adds the previous node to the path list
+            in_path = in_path.previous_node # assigns the previouse node to the in_path variable
+            drawGrid()
+    print("Done Backtracking") # this print statement should be uncommented when debugging the program
 
 # this function implements the A* algorithm
 def aStarSearch():
@@ -119,7 +122,7 @@ def aStarSearch():
         
         open_list.sort(key=lambda x: x.f_score) # this returns the open_list sorted by f_scores using a lambda function passed in the optional key parameter
 
-        current_node = open_list[0] # the current node is assigned to the cell with the lowest f score in the open_list list      
+        current_node = open_list[0] # the current node is assigned to the cell with the lowest f score in the open_list      
         
         if current_node == end: # checks if the current node is the end
             open_list.remove(current_node) # removes the current node from the open set
@@ -153,7 +156,7 @@ def aStarSearch():
                     if use_new_path == True: # checks if the algorithm has to use the new path
                         cells.h_score = heuristic(cells, end) # determines the h score of the cell
                         cells.f_score = cells.g_score + cells.h_score # determines the f score of the cell
-                        cells.previous_node = current_node # assignes the current node as the previous node to this cell
+                        cells.previous_node = current_node # assigns the current node as the previous node to this cell
         
         drawGrid() # updates the screen
     pygame.time.wait(700) # wait 700 milliseconds before continuing 
@@ -328,7 +331,6 @@ while True: # this loop will run until the user wishes to quit the program
         # checks if the program should start the search
         if start_search == True: 
             aStarSearch()
-            drawGrid()
             start_search = False
 
         # checks if the user wants to quit the program or clear the grid
