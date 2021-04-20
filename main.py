@@ -6,7 +6,7 @@ from cell import Cell # imports the Cell class from cell.py
 
 # this function displays the screen when there is no solution
 def displayResultScreen():
-    displayImage(pygame.image.load('./pathfinding_visualizer/images/no_solution.png')) # passes the image to displayImage function
+    displayImage(pygame.image.load('./images/no_solution.png')) # passes the image to displayImage function
     pygame.display.flip() # updates the pygame application
     pygame.time.wait(3000) # waits for 3 seconds before continuing the program
 
@@ -18,7 +18,7 @@ def checkForExit():
 
 # this function exits the pygame screen and ends the program
 def exitProgram():
-    displayImage(pygame.image.load('./pathfinding_visualizer/images/exit_screen.jpg')) # displays the goodbye screen
+    displayImage(pygame.image.load('./images/exit_screen.jpg')) # displays the goodbye screen
     pygame.display.flip() # updates the pygame display
     pygame.time.wait(1500) # shows the screen for 1.5 seconds
     pygame.quit() # quits the application
@@ -74,10 +74,10 @@ def drawGrid():
             elif cell in path: # checks if the cell is in the path list
                 cell.colorCell(screen, (24, 90, 90), "small square")
             
-            elif cell in open_set: # checks if the cell is in the open_set list
+            elif cell in open_list: # checks if the cell is in the open_list list
                 cell.colorCell(screen, (255, 153, 51), "circle")
             
-            elif cell in closed_set: # checks if the cell is in the closed_set list
+            elif cell in closed_list: # checks if the cell is in the closed_list list
                 cell.colorCell(screen, (255, 153, 51), "small square")
             
             elif cell.wall: # checks if the cell is a wall
@@ -96,97 +96,106 @@ def aStarBackTrack(current): # takes the current node as the only parameter
         drawGrid()
     # print("Done Backtracking") # this print statement should be uncommented when debugging the program
 
+# this function implements the A* algorithm
 def aStarSearch():
-
-    start.h_score = heuristic(start, end) # determines the absolute euclidean distance from the start node to end node
-    open_set.append(start) # adds the start node to the open_set list   
-    while len(open_set) > 0:
+    
+    start.h_score = heuristic(start, end) # determines the euclidean distance from the start node to end node
+    open_list.append(start) # adds the start node to the open_list list   
+    while len(open_list) > 0: # runs the loop until the open_list list is empty
         
         checkForExit()
         
-        lowest_f_score_index = 0
-        for index in range(len(open_set)):
-            if open_set[index].f_score < open_set[lowest_f_score_index].f_score:
-                lowest_f_score_index = index
+        open_list.sort(key=lambda x: x.f_score) # this returns the open_list sorted by f_scores using a lambda function passed in the optional key parameter
 
-        current_node = open_set[lowest_f_score_index]
+        current_node = open_list[0] # the current node is assigned to the cell with the lowest f score in the open_list list      
         
+        if current_node == end: # checks if the current node is the end
+            open_list.remove(current_node) # removes the current node from the open set
+            return current_node # returns the current node
         
-        if current_node == end:
-            open_set.remove(current_node)
-            return current_node
+        else:
+            open_list.remove(current_node) # removes from open_list and adds to closed_list
+            closed_list.append(current_node)
 
-        open_set.remove(current_node)
-        closed_set.append(current_node)
+            for cells in current_node.neighbors: # loops through all the neighbors of a cell
+                
+                if cells in closed_list or cells.wall == True:
+                    continue
+                
+                else:
 
-        for neighbor in current_node.neighbors:
-            
-            if neighbor in closed_set or neighbor.wall:
-                continue
-            
-            new_g_score = current_node.g_score + 1
-            use_new_path = False
-            
-            if neighbor in open_set:
-                if new_g_score < neighbor.g_score:
-                    neighbor.g_score = new_g_score
-                    use_new_path = True
-            
-            else:
-                neighbor.g_score = new_g_score
-                use_new_path = True
-                open_set.append(neighbor)
-            
-            if use_new_path == True:
-                neighbor.h_score = heuristic(neighbor, end)
-                neighbor.f_score = neighbor.g_score + neighbor.h_score
-                neighbor.previous_node = current_node
+                    new_g_score = current_node.g_score + 1 # adds one to the g score
+                    use_new_path = False # initializes the use_new_path as false
+                    
+                    if cells in open_list: # checks if the cell is in the open list
+                        if new_g_score < cells.g_score: #  checks if the new g score is less than the current g score
+                            cells.g_score = new_g_score # assigns the new g score to the cell
+                            use_new_path = True # since the g score is lower than the original one, the algorithm will now use this new path to the cell
+                    
+                    else:
+                        cells.g_score = new_g_score # assigns the new g score to the cell
+                        use_new_path = True # since this cell has not been visited yet it will use it as a new path
+                        open_list.append(cells) # adds this cell to the open_list
+                    
+                    if use_new_path == True: # checks if the algorithm has to use the new path
+                        cells.h_score = heuristic(cells, end) # determines the h score of the cell
+                        cells.f_score = cells.g_score + cells.h_score # determines the f score of the cell
+                        cells.previous_node = current_node # assignes the current node as the previous node to this cell
         
-        drawGrid()
-    displayResultScreen()
-    
-def displayImage(image):    
+        drawGrid() # updates the screen
+
+    displayResultScreen() # this screen will only run when the open_list is empty and there are no other neighbors; this means there is no possible path between the start and end node
+
+# this function will display the image on the screen
+def displayImage(image): # takes an image as the parameter
     screen.blit(image, (0,0))
     pygame.display.flip()
 
+# this function will display the correct tutorial page
 def displayPages():
-    tutorial_images = [pygame.image.load('./pathfinding_visualizer/images/screen_1.jpg'), pygame.image.load('./pathfinding_visualizer/images/screen_2.jpg'), pygame.image.load('./pathfinding_visualizer/images/screen_3.png'), pygame.image.load('./pathfinding_visualizer/images/screen_4.jpg'), 
-    pygame.image.load('./pathfinding_visualizer/images/screen_5.jpg'), pygame.image.load('./pathfinding_visualizer/images/screen_6.jpg'), pygame.image.load('./pathfinding_visualizer/images/screen_7.png')]
-    tutorial_index = 0
+    # this is a list of all the images in the order they are supposed to be shown
+    tutorial_images = [pygame.image.load('./images/screen_1.jpg'), pygame.image.load('./images/screen_2.jpg'), pygame.image.load('./images/screen_3.png'), pygame.image.load('./images/screen_4.jpg'), 
+    pygame.image.load('./images/screen_5.jpg'), pygame.image.load('./images/screen_6.jpg'), pygame.image.load('./images/screen_7.png')]
+    
+    tutorial_index = 0 # initializes tutorial_index
 
-    while tutorial_index < len(tutorial_images):
-        displayImage(tutorial_images[tutorial_index])
+    while tutorial_index < len(tutorial_images): # loops through all the items in the list
+        displayImage(tutorial_images[tutorial_index]) # displays the current image to the screen
+        
+        # checks for user input and handles it
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT: # checks if the user wants to quit the application
                 exitProgram()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    tutorial_index += 1
-                if event.key == pygame.K_LEFT:
-                    if tutorial_index != 0:
-                        tutorial_index-= 1
+            if event.type == pygame.KEYDOWN: # checks if the user pressed a key
+                if event.key == pygame.K_RIGHT: # checks if the key pressed is the right arrow
+                    tutorial_index += 1 # increments the tutorial_index variable
+                if event.key == pygame.K_LEFT: # checks if the key pressed is the left arrow
+                    if tutorial_index != 0: # ensures tutorial_index is not already at 0
+                        tutorial_index-= 1 # decrements the tutorial_index variable
 
+# this program will clear all the walls from the grid
 def clearWall():
-    for x in range(grid_col):
-        for y in range(grid_rows):
-            grid[x][y].wall = False
+    for x in range(grid_col): # loops through all the columns
+        for y in range(grid_rows): # loops through all the rows
+            grid[x][y].wall = False # sets the wall state to false for every cell
 
+# this function will generate random walls in the grid
 def generateRandomWalls():
 
     clearWall()
 
-    for x in range(grid_col-1):
-        for y in range(grid_rows-1):
-            if grid[x][y] == start or grid[x][y] == end:
-                continue
+    for x in range(grid_col): # loops through all the columns
+        for y in range(grid_rows): # loops through all the rows
+            if grid[x][y] == start or grid[x][y] == end: # if the current cell is the start or end it will skip it
+                continue # goes back to the top of the loop
             else:
-                if random.randint(1, 1000) < 224:
-                    grid[x][y].wall = True                    
+                if random.randint(1, 1000) < 224: # generates a random integer and then checks if it is less than 224; 224 is a random number which can be changed to effect the probability that the cell will be a wall
+                    grid[x][y].wall = True # makes the current cell a wall        
                 else:
                     continue
-        drawGrid()
+        drawGrid() # updates the grid
 
-# this function will initialize the grid that will be used for the logic of the program
+# this function will initialize the grid that will be used for the logic and gui of the program
 def initGrid():
     # adds all the cells to the grid
     for x in range(grid_col): # loops through every column
@@ -220,16 +229,17 @@ pygame.display.set_caption("Pathfinding Visualizer")
 displayPages()
 
 # main program loop
-while True:
+while True: # this loop will run until the user wishes to quit the program
 
     initGrid()
 
+    # initializes the positions of the start and end nodes
     start = grid[5][18]
     end = grid[54][18]
     
     # instantiates/resets all the lists
-    open_set = []
-    closed_set = []
+    open_list = []
+    closed_list = []
     path = []
 
     # initializes all the flag variables
@@ -243,63 +253,69 @@ while True:
     drawGrid() # draws the current grid
     pygame.display.flip() 
 
+    # this loop will run until the user wishes to reset the grid
     while True:
         
+        # checks if the user is selecting the start node
         if is_selecting_start == True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            for event in pygame.event.get(): # gets the user input
+                if event.type == pygame.QUIT: # checks if the user wants to quit the program
                     exitProgram()
-                if event.type == pygame.MOUSEBUTTONDOWN:  
-                    if event.button in (1, 3): 
+                if event.type == pygame.MOUSEBUTTONDOWN: # checks if the user pressed a mouse button
+                    if event.button in (1, 3): # checks if they pressed mouse button 1, 2 or 3
                         start = selectStart(pygame.mouse.get_pos(), start, end)
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        is_selecting_start = False
+                if event.type == pygame.KEYDOWN: # checks if the user pressed a key
+                    if event.key == pygame.K_RETURN: # checks if the key was return/enter
+                        is_selecting_start = False 
                         is_selecting_end = True
-                    if event.key == pygame.K_c:
+                    if event.key == pygame.K_c: # checks if the key pressed was c
                         reset_game = True
         
-        if is_selecting_end == True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+        # checks if the user is selecting the end node
+        if is_selecting_end == True: 
+            for event in pygame.event.get(): # gets the user input
+                if event.type == pygame.QUIT: # checks if the user wants to quit the program
                     exitProgram()
-                if event.type == pygame.MOUSEBUTTONDOWN:  
-                    if event.button in (1, 3): 
+                if event.type == pygame.MOUSEBUTTONDOWN:  # checks if the user pressed a mouse button
+                    if event.button in (1, 3): # checks if they pressed mouse button 1, 2 or 3
                         end = selectEnd(pygame.mouse.get_pos(), start, end)
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                if event.type == pygame.KEYDOWN: # checks if the user pressed a key
+                    if event.key == pygame.K_RETURN: # checks if the key was return/enter
                         is_selecting_end = False
                         is_selecting_walls = True
-                    if event.key == pygame.K_c:
+                    if event.key == pygame.K_c: # checks if the key pressed was c
                         reset_game = True
 
+        # checks if the user is selecting walls
         if is_selecting_walls == True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            for event in pygame.event.get(): # gets the user input
+                if event.type == pygame.QUIT: # checks if the user wants to quit the program
                     exitProgram()
-                if event.type == pygame.MOUSEBUTTONDOWN:  
-                    if event.button in (1, 3): 
+                if event.type == pygame.MOUSEBUTTONDOWN: # checks if the user pressed a mouse button  
+                    if event.button in (1, 3): # checks if they pressed mouse button 1, 2 or 3
                         selectWall(pygame.mouse.get_pos(), event.button==1, end, start)
-                if event.type == pygame.MOUSEMOTION:
-                    if event.buttons[0] or event.buttons[2]:  
+                if event.type == pygame.MOUSEMOTION: # checks if the user moved their mouse
+                    if event.buttons[0] or event.buttons[2]:
                         selectWall(pygame.mouse.get_pos(), event.buttons[0], end, start) 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                if event.type == pygame.KEYDOWN: # checks if the user pressed a key
+                    if event.key == pygame.K_RETURN: # checks if the key was return/enter
                         start_search = True
                         is_selecting_walls = False
-                    if event.key == pygame.K_c:
+                    if event.key == pygame.K_c: # checks if the key pressed was c
                         reset_game = True
-                    if event.key == pygame.K_w:
+                    if event.key == pygame.K_w: # checks if the key pressed was w
                         generateRandomWalls()
-                    if event.key == pygame.K_BACKSPACE:
+                    if event.key == pygame.K_BACKSPACE: # checks if the key pressed was backspace
                         clearWall()
 
-        if start_search == True:
+        # checks if the program should start the search
+        if start_search == True: 
             last_node = aStarSearch()
             aStarBackTrack(last_node)
             drawGrid()
             start_search = False
 
+        # checks if the user wants to quit the program or clear the grid
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exitProgram()
@@ -310,8 +326,8 @@ while True:
         if reset_game == True:
             break
 
-        drawGrid()
-        pygame.display.flip()
+        drawGrid() # draws the current grid
+        pygame.display.flip() # updates the screen
             
 
             
