@@ -65,6 +65,7 @@ def drawGrid():
             
             cell = grid[x][y] 
             cell.colorCell(screen, (244,250,250), "small square") # this is the color of a regular cell
+
             if cell == start: # checks if the cell is the start node
                 cell.colorCell(screen, (0, 153, 0), "node")
             
@@ -75,13 +76,13 @@ def drawGrid():
                 cell.colorCell(screen, (24, 90, 90), "small square")
             
             elif cell in open_list: # checks if the cell is in the open_list list
-                cell.colorCell(screen, (255, 153, 51), "circle")
+                cell.colorCell(screen, (255, 170, 70), "circle")
             
             elif cell in closed_list: # checks if the cell is in the closed_list list
-                cell.colorCell(screen, (255, 153, 51), "small square")
+                cell.colorCell(screen, (255, 170, 70), "small square")
             
             elif cell.wall: # checks if the cell is a wall
-                cell.colorCell(screen, (2, 18, 30), "small square")
+                cell.colorCell(screen, (127, 195, 180), "small square")
                 
     pygame.display.update() # updates the pygame display to show the new changes
 
@@ -111,7 +112,8 @@ def aStarSearch():
         
         if current_node == end: # checks if the current node is the end
             open_list.remove(current_node) # removes the current node from the open set
-            return current_node # returns the current node
+            aStarBackTrack(current_node)
+            return
         
         else:
             open_list.remove(current_node) # removes from open_list and adds to closed_list
@@ -143,7 +145,7 @@ def aStarSearch():
                         cells.previous_node = current_node # assignes the current node as the previous node to this cell
         
         drawGrid() # updates the screen
-
+    pygame.time.wait(700)
     displayResultScreen() # this screen will only run when the open_list is empty and there are no other neighbors; this means there is no possible path between the start and end node
 
 # this function will display the image on the screen
@@ -189,7 +191,7 @@ def generateRandomWalls():
             if grid[x][y] == start or grid[x][y] == end: # if the current cell is the start or end it will skip it
                 continue # goes back to the top of the loop
             else:
-                if random.randint(1, 1000) < 224: # generates a random integer and then checks if it is less than 224; 224 is a random number which can be changed to effect the probability that the cell will be a wall
+                if random.randint(1, 1000) < 500: # generates a random integer and then checks if it is less than 500; 500 is a random number which can be changed to effect the probability that the cell will be a wall
                     grid[x][y].wall = True # makes the current cell a wall        
                 else:
                     continue
@@ -310,8 +312,7 @@ while True: # this loop will run until the user wishes to quit the program
 
         # checks if the program should start the search
         if start_search == True: 
-            last_node = aStarSearch()
-            aStarBackTrack(last_node)
+            aStarSearch()
             drawGrid()
             start_search = False
 
