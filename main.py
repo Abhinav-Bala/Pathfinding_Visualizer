@@ -1,12 +1,20 @@
-import pygame # imports the pygame library
-import math # imports the math library
-import random # imports the random library
-import sys # imports sys
-from cell import Cell # imports the Cell class from cell.py
+try:
+    import pygame # imports the pygame library
+    import math # imports the math library
+    import random # imports the random library
+    import sys # imports sys
+    from cell import Cell # imports the Cell class from cell.py
+except ImportError:
+    print("Error importing required modules. Make sure to have the latest version of pygame installed.")
+    exit()
 
 # this function displays the screen when there is no solution
 def displayResultScreen():
-    displayImage(pygame.image.load('./images/no_solution.png')) # passes the image to displayImage function
+    try: # this is to handle an exception caused by retreiving the image
+        displayImage(pygame.image.load('./images/no_solution.png')) # passes the image to displayImage function
+    except Exception:  # catches any error
+        print("ERROR RETREIVING IMAGES. Make sure you are in the root directory (/pathfinding_visualizer) and all images are in the images folder") # prints error statement
+        exitProgram()
     pygame.display.flip() # updates the pygame application
     pygame.time.wait(3000) # waits for 3 seconds before continuing the program
 
@@ -16,11 +24,14 @@ def checkForExit():
         if event.type == pygame.QUIT: # checks if the event type is quit
             exitProgram() # calls the exit program function
 
-# this function exits the pygame screen and ends the program
+# this function exits the program
 def exitProgram():
-    displayImage(pygame.image.load('./images/exit_screen.jpg')) # displays the goodbye screen
-    pygame.display.flip() # updates the pygame display
-    pygame.time.wait(1500) # shows the screen for 1.5 seconds
+    try: # this is to handle an exception caused by retreiving the image
+        displayImage(pygame.image.load('./images/exit_screen.jpg')) # displays the goodbye screen
+        pygame.display.flip() # updates the pygame display
+        pygame.time.wait(1500) # shows the screen for 1.5 seconds
+    except Exception: # catches any error
+        print("ERROR RETREIVING IMAGES. Make sure you are in the root directory (/pathfinding_visualizer) and all images are in the images folder") # prints error statement
     pygame.quit() # quits the application
     sys.exit() # exits the program
 
@@ -112,7 +123,7 @@ def aStarSearch():
         
         if current_node == end: # checks if the current node is the end
             open_list.remove(current_node) # removes the current node from the open set
-            aStarBackTrack(current_node)
+            aStarBackTrack(current_node) # passes the current node to the backtracking function
             return
         
         else:
@@ -145,7 +156,7 @@ def aStarSearch():
                         cells.previous_node = current_node # assignes the current node as the previous node to this cell
         
         drawGrid() # updates the screen
-    pygame.time.wait(700)
+    pygame.time.wait(700) # wait 700 milliseconds before continuing 
     displayResultScreen() # this screen will only run when the open_list is empty and there are no other neighbors; this means there is no possible path between the start and end node
 
 # this function will display the image on the screen
@@ -155,10 +166,14 @@ def displayImage(image): # takes an image as the parameter
 
 # this function will display the correct tutorial page
 def displayPages():
-    # this is a list of all the images in the order they are supposed to be shown
-    tutorial_images = [pygame.image.load('./images/screen_1.jpg'), pygame.image.load('./images/screen_2.jpg'), pygame.image.load('./images/screen_3.png'), pygame.image.load('./images/screen_4.jpg'), 
-    pygame.image.load('./images/screen_5.jpg'), pygame.image.load('./images/screen_6.jpg'), pygame.image.load('./images/screen_7.png')]
-    
+    try:
+        # this is a list of all the images in the order they are supposed to be shown
+        tutorial_images = [pygame.image.load('./images/screen_1.jpg'), pygame.image.load('./images/screen_2.jpg'), pygame.image.load('./images/screen_3.png'), pygame.image.load('./images/screen_4.jpg'), 
+        pygame.image.load('./images/screen_5.jpg'), pygame.image.load('./images/screen_6.jpg'), pygame.image.load('./images/screen_7.png')]
+    except Exception:
+        print("ERROR RETREIVING IMAGES. Make sure you are in the root directory (/pathfinding_visualizer) and all images are in the images folder")
+        exitProgram()
+
     tutorial_index = 0 # initializes tutorial_index
 
     while tutorial_index < len(tutorial_images): # loops through all the items in the list
@@ -191,7 +206,7 @@ def generateRandomWalls():
             if grid[x][y] == start or grid[x][y] == end: # if the current cell is the start or end it will skip it
                 continue # goes back to the top of the loop
             else:
-                if random.randint(1, 1000) < 500: # generates a random integer and then checks if it is less than 500; 500 is a random number which can be changed to effect the probability that the cell will be a wall
+                if random.randint(1, 1000) < 400: # generates a random integer and then checks if it is less than 400; 400 is a random number which can be changed to effect the probability that the cell will be a wall
                     grid[x][y].wall = True # makes the current cell a wall        
                 else:
                     continue
